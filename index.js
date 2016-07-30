@@ -27,13 +27,14 @@ function determinePerfection(ivs) {
  * @param {number} CP
  * @param {number} HP
  * @param {number} dustCost Dust cost of upgrading pokemon
+ * @param {bool} neverUpgraded If you've never powered it up, fewer potential levels
  */
-function evaluate (pokemonQuery, cp, hp, dustCost) {
+function evaluate (pokemonQuery, cp, hp, dustCost, neverUpgraded) {
 	const pokemon = pokedex.pokemonByName(pokemonQuery) || pokedex.pokemonById(pokemonQuery);
 	if (!pokemon) {
 		return {error : `Could not find pokemon: ${pokemonQuery}`};
 	}
-	var potentialIVs = determinePossibleIVs(pokemon, cp, hp, dustCost);
+	var potentialIVs = determinePossibleIVs(pokemon, cp, hp, dustCost, neverUpgraded);
 
 	_.each(potentialIVs, function (possibility) {
 		possibility.perfection = determinePerfection(possibility);
@@ -54,11 +55,16 @@ function evaluate (pokemonQuery, cp, hp, dustCost) {
 	return pokeSnapshot;
 }
 
-function determinePossibleIVs (pokemon, cp, hp, dust) {
+function determinePossibleIVs (pokemon, cp, hp, dust, neverUpgraded) {
 	var potentialLevels = levelUpData.levelsByDust(dust);
 	potentialLevels.sort(function (a, b) {
 		return a.level > b.level ? 1 : -1;//no dupes
 	});
+	if (neverUpgraded) {
+		potentialLevels = _.filter(potentialLevels, function (data) {
+			return data.level % 2 === 0;
+		});
+	}
 
 	var staminaIV, attackIV, defenseIV;
 	var potentialHPIVs = [];
@@ -105,13 +111,14 @@ function determinePossibleIVs (pokemon, cp, hp, dust) {
  * @param {number} CP
  * @param {number} HP
  * @param {number} dustCost Dust cost of upgrading pokemon
+ * @param {bool} neverUpgraded If you've never powered it up, fewer potential levels
  */
-function possibleIVs (pokemonQuery, cp, hp, dust) {
+function possibleIVs (pokemonQuery, cp, hp, dust, neverUpgraded) {
 	const pokemon = pokedex.pokemonByName(pokemonQuery) || pokedex.pokemonById(pokemonQuery);
 	if (!pokemon) {
 		return {error:`Could not find pokemon: ${pokemonQuery}`};
 	}
-	const ivs = determinePossibleIVs(pokemon, cp, hp, dustCost);
+	const ivs = determinePossibleIVs(pokemon, cp, hp, dustCost, neverUpgraded);
 	if (!ivs.length) {
 		return {error: `Could not find any IVs matching given information`};
 	}

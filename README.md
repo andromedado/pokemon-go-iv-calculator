@@ -46,6 +46,8 @@ const niceTry = ivCalculator.evaluate('ivysaurus', 608, 59, 1600)
 
 Pokemon can be any case (upper/lower/mixed), OR you can use pokedex id (e.g. Ivysaur == 2)
 
+There's an optional fifth argument: Boolean : neverUpgraded. If you've never upgraded the pokemon, pass `true`. This reduces the possible levels the pokemon could be.
+
 ## Credit
 
 Inspired by : 
