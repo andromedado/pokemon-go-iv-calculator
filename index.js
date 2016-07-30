@@ -2,6 +2,7 @@
 const _ = require('underscore');
 const pokedex = require('./support/pokedex');
 const levelUpData = require('./support/levelUpData');
+const grader = require('./support/grader');
 
 function testHP(hp, iv, levelData, pokemon) {
 	return hp == parseInt(Math.floor((pokemon.stamina + iv) * levelData.cpScalar), 10);
@@ -18,73 +19,6 @@ function testCP(cp, attackIV, defenseIV, staminaIV, levelData, pokemon) {
 function determinePerfection(ivs) {
 	const perfection = (ivs.attackIV + ivs.defenseIV + ivs.staminaIV) / 45
 	return Math.floor(perfection * 100) / 100;
-}
-
-const letterGrades = [
-	{ letter : 'A', min : 0.9, mid : 0.93, plus : 0.95 },
-	{ letter : 'B', min : 0.8, mid : 0.83, plus : 0.87 },
-	{ letter : 'C', min : 0.7, mid : 0.73, plus : 0.77 },
-	{ letter : 'D', min : 0.6, mid : 0.62, plus : 0.67 },
-	{ letter : 'F', min : 0 },
-];
-
-function grade(value) {
-	var letter;
-	var modifier;
-
-	var idx;
-	var grade;
-	for (idx = 0; idx < letterGrades.length; idx++) {
-		grade = letterGrades[idx];
-		if (value >= grade.min) {
-			letter = grade.letter;
-			if (value < grade.mid) {
-				modifier = '-';
-			} else if (value >= grade.plus) {
-				modifier = '+';
-			}
-			break;
-		}
-	}
-
-	const finalGrade = {
-		letter: letter,
-		preciseLetter : letter + (modifier || '')
-	};
-
-	return finalGrade;
-}
-
-function determineGrade(possibleIVs) {
-	if (!possibleIVs.length) {
-		return 'Unknown';
-	}
-	var perfections = _.map(possibleIVs, determinePerfection);
-
-	perfections.sort();
-	const minGrade = grade(perfections[0]);
-	const maxGrade = grade(perfections[perfections.length - 1]);
-	const averagePerfection = _.reduce(perfections, function (memo, val) {return memo + val;}, 0) / perfections.length;
-	const averageGrade = grade(averagePerfection);
-
-	if (perfections.length === 1 || minGrade.preciseLetter === maxGrade.preciseLetter) {
-		return {
-			minGrade, maxGrade, averageGrade,
-			explanation : `${minGrade.preciseLetter} (${Math.floor(averagePerfection * 1000) / 10}%)`
-		};
-	}
-
-	if (averageGrade.letter === minGrade.letter && averageGrade.letter === maxGrade.letter) {
-		return {
-			minGrade, maxGrade, averageGrade,
-			explanation : `Solid ${averageGrade.preciseLetter} (${Math.floor(averagePerfection * 1000) / 10}%)`
-		};
-	}
-
-	return {
-		minGrade, maxGrade, averageGrade,
-		explanation : `Between ${maxGrade.preciseLetter} - ${minGrade.preciseLetter}`
-	}
 }
 
 function evaluate (pokemonQuery, cp, hp, dustCost) {
@@ -106,7 +40,7 @@ function evaluate (pokemonQuery, cp, hp, dustCost) {
 	})
 
 	var pokeSnapshot = {
-		grade : determineGrade(potentialIVs),
+		grade : grader.grade(_.map(potentialIVs, determinePerfection)),
 		potentialIVs
 	};
 
