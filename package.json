@@ -1,0 +1,28 @@
+{
+  "name": "pokemon-go-iv-calculator",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/andromedado/pokemon-go-iv-calculator.git"
+  },
+  "keywords": [
+    "pokemon",
+    "pokemongo",
+    "ivcalculator",
+    "calculator"
+  ],
+  "author": "Shad Downey <shad.downey@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andromedado/pokemon-go-iv-calculator/issues"
+  },
+  "homepage": "https://github.com/andromedado/pokemon-go-iv-calculator#readme",
+  "dependencies": {
+    "underscore": "^1.8.3"
+  }
+}
