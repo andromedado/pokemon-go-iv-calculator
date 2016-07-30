@@ -21,10 +21,17 @@ function determinePerfection(ivs) {
 	return Math.floor(perfection * 100) / 100;
 }
 
+/**
+ * Evaluate a given pokemon
+ * @param {string|number} Pokemon Query (e.g. "2" or "Ivysaur")
+ * @param {number} CP
+ * @param {number} HP
+ * @param {number} dustCost Dust cost of upgrading pokemon
+ */
 function evaluate (pokemonQuery, cp, hp, dustCost) {
 	const pokemon = pokedex.pokemonByName(pokemonQuery) || pokedex.pokemonById(pokemonQuery);
 	if (!pokemon) {
-		return [void 0, `Could not find pokemon: ${pokemonQuery}`];
+		return {error : `Could not find pokemon: ${pokemonQuery}`};
 	}
 	var potentialIVs = determinePossibleIVs(pokemon, cp, hp, dustCost);
 
@@ -41,7 +48,7 @@ function evaluate (pokemonQuery, cp, hp, dustCost) {
 
 	var pokeSnapshot = {
 		grade : grader.grade(_.map(potentialIVs, determinePerfection)),
-		potentialIVs
+		ivs : potentialIVs
 	};
 
 	return pokeSnapshot;
@@ -92,9 +99,27 @@ function determinePossibleIVs (pokemon, cp, hp, dust) {
 	return potentialIVs;
 }
 
+/**
+ * Determine possible IVs for a given pokemon
+ * @param {string|number} Pokemon Query (e.g. "2" or "Ivysaur")
+ * @param {number} CP
+ * @param {number} HP
+ * @param {number} dustCost Dust cost of upgrading pokemon
+ */
+function possibleIVs (pokemonQuery, cp, hp, dust) {
+	const pokemon = pokedex.pokemonByName(pokemonQuery) || pokedex.pokemonById(pokemonQuery);
+	if (!pokemon) {
+		return {error:`Could not find pokemon: ${pokemonQuery}`};
+	}
+	const ivs = determinePossibleIVs(pokemon, cp, hp, dustCost);
+	if (!ivs.length) {
+		return {error: `Could not find any IVs matching given information`};
+	}
+	return {ivs};
+}
 
 module.exports = {
-	evaluate : evaluate,
-	determinePossibleIVs : determinePossibleIVs
+	evaluate,
+	possibleIVs
 };
 
