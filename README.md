@@ -5,7 +5,7 @@ Usage:
 ```javascript
 const ivCalculator = require('pokemon-go-iv-calculator');
 
-//Ivysaur with CP 608, HP of 69, and Dus-upgrade-cost of 1600
+//Ivysaur with CP 608, HP of 69, and dust-upgrade-cost of 1600
 const result = ivCalculator.evaluate('Ivysaur', 608, 59, 1600);
 
 /**
