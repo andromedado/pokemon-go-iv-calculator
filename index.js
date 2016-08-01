@@ -62,7 +62,7 @@ function determinePossibleIVs (pokemon, cp, hp, dust, neverUpgraded) {
 	});
 	if (neverUpgraded) {
 		potentialLevels = _.filter(potentialLevels, function (data) {
-			return data.level % 2 === 0;
+			return data.level % 2 === 1;
 		});
 	}
 
@@ -129,4 +129,3 @@ module.exports = {
 	evaluate,
 	possibleIVs
 };
-
