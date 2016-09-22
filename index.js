@@ -1,3 +1,4 @@
+'use strict';
 
 const _ = require('underscore');
 const pokedex = require('./support/pokedex');
